@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PacketMind AI 抓包测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+        .danger {
+            background: #dc3545;
+        }
+        .warning {
+            background: #ffc107;
+        }
+        .success {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 PacketMind AI 抓包测试页面</h1>
+        <p>这个页面用于测试 PacketMind AI 的抓包功能。请确保已经配置好浏览器代理（127.0.0.1:8080）。</p>
+
+        <div class="test-section">
+            <h3>🔍 基础 HTTP 请求测试</h3>
+            <button onclick="testGet()">GET 请求测试</button>
+            <button onclick="testPost()">POST 请求测试</button>
+            <button onclick="testPut()">PUT 请求测试</button>
+            <button onclick="testDelete()">DELETE 请求测试</button>
+            <div id="basic-result" class="result">结果将显示在这里...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔐 安全测试（包含敏感信息）</h3>
+            <button onclick="testSensitiveData()" class="danger">测试敏感数据泄露</button>
+            <button onclick="testSQLInjection()" class="danger">测试 SQL 注入</button>
+            <button onclick="testXSS()" class="danger">测试 XSS 攻击</button>
+            <div id="security-result" class="result">安全测试结果...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 API 测试</h3>
+            <button onclick="testJSONAPI()" class="success">JSON API 测试</button>
+            <button onclick="testXMLAPI()" class="success">XML API 测试</button>
+            <button onclick="testGraphQL()" class="success">GraphQL 测试</button>
+            <div id="api-result" class="result">API 测试结果...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>⚡ 性能测试</h3>
+            <button onclick="testSlowRequest()" class="warning">慢速请求测试</button>
+            <button onclick="testLargePayload()" class="warning">大负载测试</button>
+            <button onclick="testMultipleRequests()" class="warning">批量请求测试</button>
+            <div id="performance-result" class="result">性能测试结果...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>🌐 外部 API 测试</h3>
+            <button onclick="testExternalAPI()">测试外部 API</button>
+            <button onclick="testWeatherAPI()">天气 API 测试</button>
+            <button onclick="testNewsAPI()">新闻 API 测试</button>
+            <div id="external-result" class="result">外部 API 结果...</div>
+        </div>
+    </div>
+
+    <script>
+        // 基础 HTTP 请求测试
+        async function testGet() {
+            try {
+                const response = await fetch('https://httpbin.org/get?test=packetmind');
+                const data = await response.json();
+                document.getElementById('basic-result').innerHTML = 
+                    `<strong>GET 请求成功:</strong><br>${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                document.getElementById('basic-result').innerHTML = 
+                    `<strong>GET 请求失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testPost() {
+            try {
+                const response = await fetch('https://httpbin.org/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Hello PacketMind AI!',
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('basic-result').innerHTML = 
+                    `<strong>POST 请求成功:</strong><br>${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                document.getElementById('basic-result').innerHTML = 
+                    `<strong>POST 请求失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testPut() {
+            try {
+                const response = await fetch('https://httpbin.org/put', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'update',
+                        data: 'updated content'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('basic-result').innerHTML = 
+                    `<strong>PUT 请求成功:</strong><br>${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                document.getElementById('basic-result').innerHTML = 
+                    `<strong>PUT 请求失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testDelete() {
+            try {
+                const response = await fetch('https://httpbin.org/delete', {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                document.getElementById('basic-result').innerHTML = 
+                    `<strong>DELETE 请求成功:</strong><br>${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                document.getElementById('basic-result').innerHTML = 
+                    `<strong>DELETE 请求失败:</strong><br>${error.message}`;
+            }
+        }
+
+        // 安全测试
+        async function testSensitiveData() {
+            try {
+                const response = await fetch('https://httpbin.org/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'secret123',
+                        api_key: 'sk-1234567890abcdef',
+                        credit_card: '4111-1111-1111-1111',
+                        ssn: '123-45-6789'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('security-result').innerHTML = 
+                    `<strong>敏感数据测试完成:</strong><br>包含密码、API密钥、信用卡号等敏感信息`;
+            } catch (error) {
+                document.getElementById('security-result').innerHTML = 
+                    `<strong>敏感数据测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testSQLInjection() {
+            try {
+                const response = await fetch('https://httpbin.org/get?' + 
+                    encodeURIComponent("id=1' OR '1'='1") + '&' +
+                    encodeURIComponent("query=SELECT * FROM users WHERE id=1; DROP TABLE users;")
+                );
+                const data = await response.json();
+                document.getElementById('security-result').innerHTML = 
+                    `<strong>SQL 注入测试完成:</strong><br>包含 SQL 注入攻击模式`;
+            } catch (error) {
+                document.getElementById('security-result').innerHTML = 
+                    `<strong>SQL 注入测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testXSS() {
+            try {
+                const response = await fetch('https://httpbin.org/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        comment: '<script>alert("XSS")</script>',
+                        user_input: 'javascript:alert("XSS")',
+                        payload: 'onload=alert("XSS")'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('security-result').innerHTML = 
+                    `<strong>XSS 测试完成:</strong><br>包含 XSS 攻击模式`;
+            } catch (error) {
+                document.getElementById('security-result').innerHTML = 
+                    `<strong>XSS 测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        // API 测试
+        async function testJSONAPI() {
+            try {
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                const data = await response.json();
+                document.getElementById('api-result').innerHTML = 
+                    `<strong>JSON API 测试成功:</strong><br>${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                document.getElementById('api-result').innerHTML = 
+                    `<strong>JSON API 测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testXMLAPI() {
+            try {
+                const response = await fetch('https://httpbin.org/xml');
+                const data = await response.text();
+                document.getElementById('api-result').innerHTML = 
+                    `<strong>XML API 测试成功:</strong><br>${data.substring(0, 200)}...`;
+            } catch (error) {
+                document.getElementById('api-result').innerHTML = 
+                    `<strong>XML API 测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testGraphQL() {
+            try {
+                const response = await fetch('https://httpbin.org/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            query {
+                                user(id: 1) {
+                                    id
+                                    name
+                                    email
+                                }
+                            }
+                        `
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('api-result').innerHTML = 
+                    `<strong>GraphQL 测试完成:</strong><br>模拟 GraphQL 查询`;
+            } catch (error) {
+                document.getElementById('api-result').innerHTML = 
+                    `<strong>GraphQL 测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        // 性能测试
+        async function testSlowRequest() {
+            try {
+                const response = await fetch('https://httpbin.org/delay/3');
+                const data = await response.json();
+                document.getElementById('performance-result').innerHTML = 
+                    `<strong>慢速请求测试完成:</strong><br>3秒延迟请求`;
+            } catch (error) {
+                document.getElementById('performance-result').innerHTML = 
+                    `<strong>慢速请求测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testLargePayload() {
+            try {
+                const largeData = {
+                    items: Array.from({length: 1000}, (_, i) => ({
+                        id: i,
+                        name: `Item ${i}`,
+                        description: 'This is a large payload for testing purposes. '.repeat(10)
+                    }))
+                };
+                
+                const response = await fetch('https://httpbin.org/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(largeData)
+                });
+                const data = await response.json();
+                document.getElementById('performance-result').innerHTML = 
+                    `<strong>大负载测试完成:</strong><br>发送了包含 1000 个项目的 JSON 数据`;
+            } catch (error) {
+                document.getElementById('performance-result').innerHTML = 
+                    `<strong>大负载测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testMultipleRequests() {
+            try {
+                const promises = Array.from({length: 10}, (_, i) => 
+                    fetch(`https://httpbin.org/get?request=${i}`)
+                );
+                const responses = await Promise.all(promises);
+                document.getElementById('performance-result').innerHTML = 
+                    `<strong>批量请求测试完成:</strong><br>同时发送了 10 个请求`;
+            } catch (error) {
+                document.getElementById('performance-result').innerHTML = 
+                    `<strong>批量请求测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        // 外部 API 测试
+        async function testExternalAPI() {
+            try {
+                const response = await fetch('https://api.github.com/users/octocat');
+                const data = await response.json();
+                document.getElementById('external-result').innerHTML = 
+                    `<strong>GitHub API 测试成功:</strong><br>用户名: ${data.login}, 类型: ${data.type}`;
+            } catch (error) {
+                document.getElementById('external-result').innerHTML = 
+                    `<strong>GitHub API 测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testWeatherAPI() {
+            try {
+                const response = await fetch('https://httpbin.org/get?city=beijing&temp=25&humidity=60');
+                const data = await response.json();
+                document.getElementById('external-result').innerHTML = 
+                    `<strong>天气 API 模拟测试完成:</strong><br>模拟天气数据请求`;
+            } catch (error) {
+                document.getElementById('external-result').innerHTML = 
+                    `<strong>天气 API 测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        async function testNewsAPI() {
+            try {
+                const response = await fetch('https://httpbin.org/get?category=technology&limit=5');
+                const data = await response.json();
+                document.getElementById('external-result').innerHTML = 
+                    `<strong>新闻 API 模拟测试完成:</strong><br>模拟新闻数据请求`;
+            } catch (error) {
+                document.getElementById('external-result').innerHTML = 
+                    `<strong>新闻 API 测试失败:</strong><br>${error.message}`;
+            }
+        }
+
+        // 页面加载时显示说明
+        window.onload = function() {
+            console.log('PacketMind AI 抓包测试页面已加载');
+            console.log('请确保已配置浏览器代理: 127.0.0.1:8080');
+        };
+    </script>
+</body>
+</html>
